@@ -1,4 +1,4 @@
-# coldchain_dashboard/app.py (SQLite fallback version)
+# coldchain_dashboard/app.py (SQLite fallback version with fix for executable SQL)
 
 import streamlit as st
 import pandas as pd
@@ -7,13 +7,13 @@ import plotly.express as px
 from datetime import datetime
 from prophet import Prophet
 import streamlit_authenticator as stauth
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 # --- Use SQLite instead of PostgreSQL for simplicity ---
 engine = create_engine('sqlite:///coldchain.db')
 conn = engine.connect()
 
-conn.execute('''
+conn.execute(text('''
     CREATE TABLE IF NOT EXISTS sensor_data (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         vehicle_id TEXT,
@@ -22,7 +22,7 @@ conn.execute('''
         humidity REAL,
         location TEXT
     )
-''')
+'''))
 
 # --- Authentication Setup ---
 names = ['Admin']
