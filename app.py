@@ -1,4 +1,4 @@
-# coldchain_dashboard/app.py (with pre-hashed password fix)
+# coldchain_dashboard/app.py (fixed authenticator constructor)
 
 import streamlit as st
 import pandas as pd
@@ -24,14 +24,21 @@ conn.execute(text('''
     )
 '''))
 
-# --- Authentication Setup ---
-names = ['Admin']
-usernames = ['admin']
-# Pre-hashed password for '123' generated using stauth.Hasher(['123']).generate()
-hashed_passwords = ['pbkdf2:sha256:260000$UeM0BC5oycD5AfVi$25f7a76126231734d7ff70bb5569f2702f65773965bdc7ce14cabc9881242142']
+# --- Authentication Setup (dictionary format) ---
+credentials = {
+    "usernames": {
+        "admin": {
+            "name": "Admin",
+            "password": "pbkdf2:sha256:260000$UeM0BC5oycD5AfVi$25f7a76126231734d7ff70bb5569f2702f65773965bdc7ce14cabc9881242142"
+        }
+    }
+}
 
-authenticator = stauth.Authenticate(names, usernames, hashed_passwords,
-                                    'coldchain_dashboard', 'abcdef', cookie_expiry_days=1)
+authenticator = stauth.Authenticate(
+    credentials,
+    'coldchain_dashboard', 'abcdef', cookie_expiry_days=1
+)
+
 name, authentication_status, username = authenticator.login('Login', 'main')
 
 if not authentication_status:
