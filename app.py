@@ -1,4 +1,4 @@
-# coldchain_dashboard/app.py
+# coldchain_dashboard/app.py (SQLite fallback version)
 
 import streamlit as st
 import pandas as pd
@@ -9,16 +9,15 @@ from prophet import Prophet
 import streamlit_authenticator as stauth
 from sqlalchemy import create_engine
 
-# --- Database Setup (PostgreSQL) ---
-DB_URL = "postgresql://your_user:your_password@your_host:5432/your_db"
-engine = create_engine(DB_URL)
+# --- Use SQLite instead of PostgreSQL for simplicity ---
+engine = create_engine('sqlite:///coldchain.db')
 conn = engine.connect()
 
 conn.execute('''
     CREATE TABLE IF NOT EXISTS sensor_data (
-        id SERIAL PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         vehicle_id TEXT,
-        timestamp TIMESTAMP,
+        timestamp TEXT,
         temperature REAL,
         humidity REAL,
         location TEXT
